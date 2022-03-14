@@ -26,7 +26,7 @@ export const comments = (
       let comment = action.payload
       comment.id = state.comments.length
       return {
-        ...state, comments: state.comments(comment)
+        ...state, comments: state.comments.concat(comment)
       }
     default:
       return state
