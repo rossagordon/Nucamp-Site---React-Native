@@ -1,12 +1,10 @@
-import React, { Component } from 'react'
-import { render } from 'react-dom'
-import { View, FlatList } from 'react-native'
-import { Tile } from 'react-native-elements'
-import { connect } from 'react-redux'
-import { baseUrl } from '../shared/baseUrl'
-import Loading from './LoadingComponent'
-import * as Animatable from 'react-native-animatable'
-
+import React, { Component } from 'react';
+import { FlatList, View, Text } from 'react-native';
+import { Tile } from 'react-native-elements';
+import Loading from './LoadingComponent';
+import { connect } from 'react-redux';
+import { baseUrl } from '../shared/baseUrl';
+import * as Animatable from 'react-native-animatable';
 
 const mapStateToProps = state => {
     return {
@@ -56,4 +54,4 @@ class Directory extends Component {
     }
 }
 
-export default connect(mapStateToProps)(Directory);
+export default connect(mapStateToProps)(Directory)
