@@ -3,6 +3,7 @@ import { View, StyleSheet, ScrollView, Image } from 'react-native'
 import { Input, CheckBox, Button, Icon } from 'react-native-elements'
 import * as SecureStore from 'expo-secure-store'
 import * as ImagePicker from 'expo-image-picker'
+import * as ImageManipulator from 'expo-image-manipulator'
 import * as Permissions from 'expo-permissions'
 import { createBottomTabNavigator } from 'react-navigation-tabs'
 import { baseUrl } from '../shared/baseUrl'
@@ -39,7 +40,7 @@ class LoginTab extends Component {
                     username: this.state.username,
                     password: this.state.password
                 })
-            ).catch(error => console.log('Could not save user info', error));
+            ).catch(error => console.log('Could not save user info', error))
         } else {
             SecureStore.deleteItemAsync('userinfo').catch(
                 error => console.log('Could not delete user info', error)
@@ -50,7 +51,7 @@ class LoginTab extends Component {
     componentDidMount() {
         SecureStore.getItemAsync('userinfo')
             .then(userdata => {
-                const userinfo = JSON.parse(userdata);
+                const userinfo = JSON.parse(userdata)
                 if (userinfo) {
                     this.setState({username: userinfo.username})
                     this.setState({password: userinfo.password})
@@ -164,6 +165,31 @@ class RegisterTab extends Component {
         }
     }
 
+    processImage = async (imgUri) => {
+        const processedImage = await ImageManipulator.manipulateAsync(
+            imgUri, 
+            [{ resize: { width: 400 }}],
+            { compress: 1, format: ImageManipulator.SaveFormat.PNG }
+        )
+        console.log(processedImage)
+        this.setState({imageUrl: processedImage.uri})
+    }
+
+    getImageFromGallery = async () => {
+        const cameraRollPermission = await Permissions.askAsync(Permissions.CAMERA_ROLL)
+
+        if (cameraRollPermission.status === 'granted') {
+            const capturedImage = await ImagePicker.launchImageLibraryAsync({
+                allowsEditing: true,
+                aspect: [1, 1]
+            })
+            if (!capturedImage.cancelled) {
+                console.log(capturedImage)
+                this.processImage(capturedImage.uri)
+            }
+        }
+    }
+
     handleRegister() {
         console.log(JSON.stringify(this.state))
         if (this.state.remember) {
@@ -190,6 +216,10 @@ class RegisterTab extends Component {
                         <Button
                             title='Camera'
                             onPress={this.getImageFromCamera}
+                        />
+                        <Button 
+                            title='Gallery'
+                            onPress={this.getImageFromGallery}
                         />
                     </View>
                     <Input
@@ -256,7 +286,7 @@ class RegisterTab extends Component {
                     </View>
                 </View>
             </ScrollView>
-        );
+        )
     }
 }
 
@@ -309,4 +339,4 @@ const styles = StyleSheet.create({
     }
 })
 
-export default Login;
+export default Login
